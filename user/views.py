@@ -37,6 +37,7 @@ class RegisterView(APIView):
 #Login class
 
 class LoginView(APIView):
+    
     def post(self, request):
         email = request.data["email"]
         password = request.data["password"]
@@ -79,3 +80,15 @@ class LoginView(APIView):
         
         response.data = serializer.data
         return response
+
+
+#Test Token
+class GetUser(APIView):
+    def get(self,request):
+        print(request.userId)
+        findUser = User.objects.filter(id=request.userId).first()
+        
+        print(findUser)
+        # Serialize the user object
+        serializer = UserSerializer(findUser)
+        return Response(serializer.data)
