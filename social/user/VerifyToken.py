@@ -8,7 +8,7 @@ class VerifyToken:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request,*args,**kwargs):
         # Get the token from the request
         token = request.COOKIES.get('ene')
         
@@ -24,7 +24,7 @@ class VerifyToken:
         except jwt.InvalidTokenError:
             return HttpResponseForbidden('Invalid token')
 
-        return self.get_response(request)
+        return self.get_response(request,*args, **kwargs)
     
     
     

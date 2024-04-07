@@ -8,6 +8,6 @@ from django.urls import re_path
 urlpatterns = [
     path('create/', csrf_exempt(VerifyToken(Create.as_view()))),
    # path('update/<int:pk>/' ,csrf_exempt(VerifyToken(Update.as_view()))),
-    path('update/', csrf_exempt(VerifyToken(Update.as_view())))
+    path('update/<int:pk>/', csrf_exempt(VerifyToken(Update.as_view())))
 
  ]
