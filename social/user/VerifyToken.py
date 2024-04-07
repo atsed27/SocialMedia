@@ -1,6 +1,9 @@
 from django.http import HttpResponseForbidden
 import jwt
 
+# Remove the csrf_exempt decorator from the URLs
+
+# Update the VerifyToken middleware to handle the pk argument
 class VerifyToken:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -8,7 +11,7 @@ class VerifyToken:
     def __call__(self, request):
         # Get the token from the request
         token = request.COOKIES.get('ene')
-
+        
         # Validate the token
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
@@ -22,3 +25,7 @@ class VerifyToken:
             return HttpResponseForbidden('Invalid token')
 
         return self.get_response(request)
+    
+    
+    
+    
