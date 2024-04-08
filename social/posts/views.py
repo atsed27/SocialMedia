@@ -122,3 +122,15 @@ class CommentPost(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+    
+    #Delete post
+    def delete(self,request,pk):
+         #find comment
+        findComment = PostComment.objects.filter(id=pk).first()
+        if findComment is None:
+            return Response({"message": "Comment is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        print(request.userId,findComment.user.id)
+        if str(findComment.user.id)!=str(request.userId):
+             return Response({"message": "you can not Delete comment", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
+        PostComment.objects.filter(id=pk).delete()
+        return Response({"message": "you can not Delete comment", "status": "200", "error": "True"}, status=status.HTTP_200_OK)
