@@ -14,3 +14,11 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+#follower and following model
+class UserFollow(models.Model):
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="src_follow")
+    following = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="dest_following")
+    follows = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="dest_follow")
+    

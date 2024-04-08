@@ -18,4 +18,6 @@ urlpatterns = [
     #comment
     re_path(r'^comment/(?P<pk>[0-9a-f-]+)/$',csrf_exempt(VerifyToken(CommentPost.as_view())),name="comment_post"),
     
+    
+   
  ]

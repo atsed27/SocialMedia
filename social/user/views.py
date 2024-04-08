@@ -2,9 +2,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import UserSerializer
+from .serializers import UserSerializer,FollowSerializer
 from rest_framework import status
-from .models import User
+from .models import User,UserFollow
 import jwt, datetime
 
 
@@ -92,3 +92,27 @@ class GetUser(APIView):
         # Serialize the user object
         serializer = UserSerializer(findUser)
         return Response(serializer.data)
+
+class Follower(APIView):
+    def post(self,request,pk):
+        #find user
+        findUser=User.objects.filter(id=pk).first();
+        
+        #find signIn user
+        signInUser=User.objects.filter(id=request.userId).first()
+        
+        if findUser is None:
+            return Response("User is not found", status=status.HTTP_404_NOT_FOUND)
+        
+        print(findUser.id)
+        if str(findUser.id) == str(request.userId):
+            return Response("you are not follow yourSelf", status=status.HTTP_409_CONFLICT)
+        
+        followUser = UserFollow.objects.get_or_create(user=signInUser,follows=findUser)
+        following = UserFollow.objects.get_or_create(user=findUser,following=signInUser)
+        if not followUser[1]:
+                followUser[0].delete()
+                return Response({ "success": True, "message": "unFollowed user" },status=status.HTTP_202_ACCEPTED)
+        else:
+                return Response({ "success": True, "message": "followed user" },status=status.HTTP_202_ACCEPTED)
+

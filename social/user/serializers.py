@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User,UserFollow
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,4 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
     
-    
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=UserFollow
+        fields="__all__"
