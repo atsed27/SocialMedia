@@ -1,10 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import PostSerializers
+from .serializers import PostSerializers,PostLikeSerializer
 from user.models import User
-from .models import Post
+from .models import Post,PostLike
 from rest_framework import status
-
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -56,3 +55,22 @@ class Delete(APIView):
         
         return Response({"message": "Post is Deleted", "status": "200", "error": "False"},status=status.HTTP_200_OK)
     
+#create post like
+class LikePost(APIView):
+    def post(self,request,pk):
+        print(request.userId)
+        
+        # Find Post
+        findPost = Post.objects.filter(id=pk).first()
+        #find user
+        findUser =User.objects.filter(id=request.userId).first();
+        if findPost is None:
+          return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        new = PostLike.objects.get_or_create(user=findUser, post=findPost)
+        print(new)
+        if not new[1]:
+                new[0].delete()
+                return Response({ "success": True, "message": "post unliked" })
+        else:
+                return Response({ "success": True, "message": "post liked" })
+        
