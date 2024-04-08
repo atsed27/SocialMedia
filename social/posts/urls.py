@@ -12,4 +12,6 @@ urlpatterns = [
     
     #like post
     re_path(r'^like/(?P<pk>[0-9a-f-]+)/$',csrf_exempt(VerifyToken(LikePost.as_view())),name="like_post"),
+    re_path(r'^like/(?P<pk>[0-9a-f-]+)/$',csrf_exempt(VerifyToken(LikePost.as_view())),name="like_post"),
+    
  ]

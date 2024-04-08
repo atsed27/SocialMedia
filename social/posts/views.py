@@ -57,8 +57,23 @@ class Delete(APIView):
     
 #create post like
 class LikePost(APIView):
+    
+    def get(self,request,pk):
+        
+        # Find Post
+        findPost = Post.objects.filter(id=pk).first()
+        #find postLike
+        findLikePost=PostLike.objects.filter(post=findPost)
+        
+        if findPost is None:
+          return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PostLikeSerializer(findLikePost, many=True)
+        
+        return Response({ "success": True, "likes_list": serializer.data })
+    
     def post(self,request,pk):
-        print(request.userId)
+        
         
         # Find Post
         findPost = Post.objects.filter(id=pk).first()
