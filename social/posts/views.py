@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import PostSerializers,PostLikeSerializer,PostCommentSerialize
 from user.models import User
-from .models import Post,PostLike
+from .models import Post,PostLike,PostComment
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
@@ -92,9 +92,11 @@ class LikePost(APIView):
 
 class CommentPost(APIView):
     
+    
     def post(self,request,pk):
         serializer = PostCommentSerialize(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         # Find Post
         findPost = Post.objects.filter(id=pk).first()
         
@@ -107,3 +109,16 @@ class CommentPost(APIView):
         serializer.save(post=findPost,user=findUser)
         return Response(serializer.data)
         
+    def put(self,request,pk):
+        #find comment
+        findComment = PostComment.objects.filter(id=pk).first()
+        if findComment is None:
+            return Response({"message": "Comment is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        if str(findComment.user.id)!=str(request.userId):
+             return Response({"message": "you can not update comment", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer=PostCommentSerialize(findComment,data=request.data,partial=True)
+     
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

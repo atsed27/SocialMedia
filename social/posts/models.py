@@ -16,15 +16,16 @@ class  Post(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     
 class PostLike(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(Post, null=False, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (("post", "user"), )
 
-
 #comment in post
 class PostComment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     comment_text = models.CharField(max_length=264)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
