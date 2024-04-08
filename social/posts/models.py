@@ -21,3 +21,12 @@ class PostLike(models.Model):
 
     class Meta:
         unique_together = (("post", "user"), )
+
+
+#comment in post
+class PostComment(models.Model):
+    comment_text = models.CharField(max_length=264)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, null=True, on_delete=models.CASCADE)

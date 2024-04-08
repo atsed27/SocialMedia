@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import PostSerializers,PostLikeSerializer
+from .serializers import PostSerializers,PostLikeSerializer,PostCommentSerialize
 from user.models import User
 from .models import Post,PostLike
 from rest_framework import status
@@ -73,8 +73,6 @@ class LikePost(APIView):
         return Response({ "success": True, "likes_list": serializer.data })
     
     def post(self,request,pk):
-        
-        
         # Find Post
         findPost = Post.objects.filter(id=pk).first()
         #find user
@@ -82,10 +80,30 @@ class LikePost(APIView):
         if findPost is None:
           return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
         new = PostLike.objects.get_or_create(user=findUser, post=findPost)
-        print(new)
+        
         if not new[1]:
                 new[0].delete()
                 return Response({ "success": True, "message": "post unliked" })
         else:
                 return Response({ "success": True, "message": "post liked" })
+        
+        
+#comment
+
+class CommentPost(APIView):
+    
+    def post(self,request,pk):
+        serializer = PostCommentSerialize(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # Find Post
+        findPost = Post.objects.filter(id=pk).first()
+        
+        #find User
+        findUser = User.objects.filter(id=request.userId).first()
+        
+        if findPost is None:
+          return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer.save(post=findPost,user=findUser)
+        return Response(serializer.data)
         
