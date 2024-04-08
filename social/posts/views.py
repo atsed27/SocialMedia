@@ -33,11 +33,26 @@ class Update(APIView):
             return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
         if str(findPost.user.id) != str(request.userId):
             return Response({"message": "You cannot update the post", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
-
+        
         serializer = PostSerializers(findPost, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         findPostUser = User.objects.filter(id=request.userId).first()
         serializer.save(user=findPostUser)
 
         print(request.userId)
-        return Response({"message": "Update Post is update", "status": "200", "error": "False"},status=status.HTTP_200_OK)
+        return Response({"message": "Post is update", "status": "200", "error": "False"},status=status.HTTP_200_OK)
+    
+    
+class Delete(APIView):
+    def delete(self,request,pk):
+        #find Post
+        findPost=Post.objects.filter(id=pk).first()
+        if findPost is None:
+            return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if str(findPost.user.id) != str(request.userId):
+            return Response({"message": "You cannot Delete the post", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
+        Post.objects.filter(id=pk).delete()
+        
+        return Response({"message": "Post is Deleted", "status": "200", "error": "False"},status=status.HTTP_200_OK)
+    
