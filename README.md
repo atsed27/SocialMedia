@@ -1,5 +1,3 @@
-## Support
+## Django Simple Social Media Rest Api
 
-Test
-
-## Stay in touch
+using FirBase for Storage image
