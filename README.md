@@ -12,4 +12,4 @@ using FirBase for Storage image
 
 4. python manage.py migrate
 
-4.python manage.py runserver
+5. python manage.py runserver
