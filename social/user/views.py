@@ -66,6 +66,7 @@ class LoginView(APIView):
         # Create Jwt Token
         payload = {
             'id': str(findUser.id),  # Convert UUID to string
+            'isAdmin':str(findUser.is_superuser),
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }

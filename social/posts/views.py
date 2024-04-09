@@ -28,19 +28,24 @@ class Update(APIView):
     def put(self, request, pk):
         # Find Post
         findPost = Post.objects.filter(id=pk).first()
+        
+        
+        print(not request.isAdmin)
+        print((str(findPost.user.id) != str(request.userId)))
         if findPost is None:
             return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
-        if str(findPost.user.id) != str(request.userId):
+       
+        if (str(findPost.user.id) == str(request.userId)) or ( request.isAdmin):
+            serializer = PostSerializers(findPost, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user=findPost.user)
+            print(request.userId)
+            return Response({"message": "Post is update", "status": "200", "error": "False"},status=status.HTTP_200_OK)
+        else:
             return Response({"message": "You cannot update the post", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
+            
         
-        serializer = PostSerializers(findPost, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        findPostUser = User.objects.filter(id=request.userId).first()
-        serializer.save(user=findPostUser)
-
-        print(request.userId)
-        return Response({"message": "Post is update", "status": "200", "error": "False"},status=status.HTTP_200_OK)
-    
+        
     
 class Delete(APIView):
     def delete(self,request,pk):
@@ -49,12 +54,13 @@ class Delete(APIView):
         if findPost is None:
             return Response({"message": "Post is not found", "status": "404", "error": "True"}, status=status.HTTP_404_NOT_FOUND)
         
-        if str(findPost.user.id) != str(request.userId):
-            return Response({"message": "You cannot Delete the post", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
-        Post.objects.filter(id=pk).delete()
+        if (str(findPost.user.id) == str(request.userId)) or ( request.isAdmin):
+             Post.objects.filter(id=pk).delete()
         
-        return Response({"message": "Post is Deleted", "status": "200", "error": "False"},status=status.HTTP_200_OK)
-    
+             return Response({"message": "Post is Deleted", "status": "200", "error": "False"},status=status.HTTP_200_OK)
+        else:
+           return Response({"message": "You cannot Delete the post", "status": "403", "error": "True"}, status=status.HTTP_403_FORBIDDEN)
+       
 #create post like
 class LikePost(APIView):
     

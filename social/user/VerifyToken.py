@@ -18,7 +18,8 @@ class VerifyToken:
 
             # Add the user ID to the request for further processing
             request.userId = payload['id']
-            print(request.userId)
+            request.isAdmin=payload['isAdmin']
+            print(request.userId,request.isAdmin)
         except jwt.ExpiredSignatureError:
             return HttpResponseForbidden('Token expired')
         except jwt.InvalidTokenError:
